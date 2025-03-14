@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Distribución de Gatos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #gato-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        #historia {
+            font-size: 18px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        #nuevo-gato {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #ff9800;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🐱 Sistema de Distribución de Gatos 🐱</h1>
+    <p>Tu gato ha sido entregado con éxito.</p>
+    
+    <img id="gato-img" src="" alt="Gato en camino...">
+    <p id="historia"></p>
+    
+    <button id="nuevo-gato">¡Quiero otro gato!</button>
+
+    <script>
+        const frases = [
+            "Los algoritmos detectaron que necesitabas compañía, así que el sistema te asignó a {nombre}.",
+            "Por error en la distribución, {nombre} fue entregado en tu ubicación. Por favor, cuídalo.",
+            "Felicidades, has sido seleccionado para recibir un gato de nivel {nivel}. Su nombre es {nombre}.",
+            "{nombre} se infiltró en el sistema de distribución y llegó hasta ti. Ahora es tu responsabilidad.",
+            "El Sistema ha determinado que {nombre} es compatible contigo. Su entrega ha sido autorizada."
+        ];
+
+        const nombresGatos = ["Michi", "Pelusa", "Garfield", "Simba", "Luna", "Tom", "Felix", "Nube", "Tigre", "Whiskers"];
+
+        function obtenerGato() {
+            fetch('https://api.thecatapi.com/v1/images/search')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("gato-img").src = data[0].url;
+
+                    // Seleccionar frase aleatoria
+                    let nombreGato = nombresGatos[Math.floor(Math.random() * nombresGatos.length)];
+                    let nivel = Math.floor(Math.random() * 100) + 1;
+                    let frase = frases[Math.floor(Math.random() * frases.length)]
+                        .replace("{nombre}", nombreGato)
+                        .replace("{nivel}", nivel);
+
+                    document.getElementById("historia").textContent = frase;
+                })
+                .catch(error => console.error('Error al obtener el gato:', error));
+        }
+
+        document.getElementById("nuevo-gato").addEventListener("click", obtenerGato);
+
+        // Obtener un gato al cargar la página
+        obtenerGato();
+    </script>
+
+</body>
+</html>
