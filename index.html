@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Distribución de Gatos</title>
+    <title>Cat Distribution System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,7 +27,7 @@
             border-radius: 5px;
             display: inline-block;
         }
-        #nuevo-gato {
+        .boton {
             margin-top: 20px;
             padding: 10px 15px;
             font-size: 16px;
@@ -36,51 +36,87 @@
             border: none;
             color: white;
             border-radius: 5px;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🐱 Sistema de Distribución de Gatos 🐱</h1>
-    <p>Tu gato ha sido entregado con éxito.</p>
+    <h1 id="titulo">🐱 Cat Distribution System 🐱</h1>
+    <p id="subtitulo">Your cat has been delivered successfully.</p>
     
-    <img id="gato-img" src="" alt="Gato en camino...">
+    <img id="gato-img" src="" alt="Cat on the way...">
     <p id="historia"></p>
     
-    <button id="nuevo-gato">¡Quiero otro gato!</button>
+    <button class="boton" id="nuevo-gato">I want another cat!</button>
+    <button class="boton" id="cambiar-idioma">🌎 Español</button>
 
     <script>
-        const frases = [
-            "Los algoritmos detectaron que necesitabas compañía, así que el sistema te asignó a {nombre}.",
-            "Por error en la distribución, {nombre} fue entregado en tu ubicación. Por favor, cuídalo.",
-            "Felicidades, has sido seleccionado para recibir un gato de nivel {nivel}. Su nombre es {nombre}.",
-            "{nombre} se infiltró en el sistema de distribución y llegó hasta ti. Ahora es tu responsabilidad.",
-            "El Sistema ha determinado que {nombre} es compatible contigo. Su entrega ha sido autorizada."
-        ];
+        const textos = {
+            en: {
+                titulo: "🐱 Cat Distribution System 🐱",
+                subtitulo: "Your cat has been delivered successfully.",
+                boton: "I want another cat!",
+                botonIdioma: "🌎 Español",
+                frases: [
+                    "The algorithm detected that you needed company, so the system assigned you {nombre}.",
+                    "Due to a distribution error, {nombre} has been delivered to your location. Please take care of them.",
+                    "Congratulations! You have been selected to receive a level {nivel} cat. Their name is {nombre}.",
+                    "{nombre} hacked the distribution system and reached you. Now it's your responsibility.",
+                    "The system has determined that {nombre} is compatible with you. Delivery authorized."
+                ],
+                altGato: "Cat on the way..."
+            },
+            es: {
+                titulo: "🐱 Sistema de Distribución de Gatos 🐱",
+                subtitulo: "Tu gato ha sido entregado con éxito.",
+                boton: "¡Quiero otro gato!",
+                botonIdioma: "🌎 English",
+                frases: [
+                    "Los algoritmos detectaron que necesitabas compañía, así que el sistema te asignó a {nombre}.",
+                    "Por error en la distribución, {nombre} fue entregado en tu ubicación. Por favor, cuídalo.",
+                    "Felicidades, has sido seleccionado para recibir un gato de nivel {nivel}. Su nombre es {nombre}.",
+                    "{nombre} se infiltró en el sistema de distribución y llegó hasta ti. Ahora es tu responsabilidad.",
+                    "El Sistema ha determinado que {nombre} es compatible contigo. Su entrega ha sido autorizada."
+                ],
+                altGato: "Gato en camino..."
+            }
+        };
 
         const nombresGatos = ["Michi", "Pelusa", "Garfield", "Simba", "Luna", "Tom", "Felix", "Nube", "Tigre", "Whiskers"];
+
+        let idiomaActual = "en"; // Idioma por defecto
 
         function obtenerGato() {
             fetch('https://api.thecatapi.com/v1/images/search')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("gato-img").src = data[0].url;
+                    document.getElementById("gato-img").alt = textos[idiomaActual].altGato;
 
-                    // Seleccionar frase aleatoria
                     let nombreGato = nombresGatos[Math.floor(Math.random() * nombresGatos.length)];
                     let nivel = Math.floor(Math.random() * 100) + 1;
-                    let frase = frases[Math.floor(Math.random() * frases.length)]
+                    let frase = textos[idiomaActual].frases[Math.floor(Math.random() * textos[idiomaActual].frases.length)]
                         .replace("{nombre}", nombreGato)
                         .replace("{nivel}", nivel);
 
                     document.getElementById("historia").textContent = frase;
                 })
-                .catch(error => console.error('Error al obtener el gato:', error));
+                .catch(error => console.error('Error fetching cat:', error));
+        }
+
+        function cambiarIdioma() {
+            idiomaActual = idiomaActual === "en" ? "es" : "en";
+            document.getElementById("titulo").textContent = textos[idiomaActual].titulo;
+            document.getElementById("subtitulo").textContent = textos[idiomaActual].subtitulo;
+            document.getElementById("nuevo-gato").textContent = textos[idiomaActual].boton;
+            document.getElementById("cambiar-idioma").textContent = textos[idiomaActual].botonIdioma;
+            obtenerGato(); // Para generar una nueva historia en el idioma actual
         }
 
         document.getElementById("nuevo-gato").addEventListener("click", obtenerGato);
+        document.getElementById("cambiar-idioma").addEventListener("click", cambiarIdioma);
 
-        // Obtener un gato al cargar la página
         obtenerGato();
     </script>
 
